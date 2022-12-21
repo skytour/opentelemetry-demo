@@ -20,10 +20,12 @@ Add OpenTelemetry Helm repository:
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 ```
 
+**Replace variables in the `helm-values.yml` file at the root of this repository with the actual values, For more information about the variables, see [Variables](https://www.alibabacloud.com/help/en/log-service/latest/import-trace-data-from-opentelemetry-to-log-service#table-wzj-90p-dvw)**
+
 To install the chart with the release name my-otel-demo, run the following command:
 
 ```shell
-helm install my-otel-demo open-telemetry/opentelemetry-demo
+helm install my-otel-demo open-telemetry/opentelemetry-demo --values helm-values.yml
 ```
 
 > **Note**
@@ -54,8 +56,7 @@ need to expose the OpenTelemetry Collector's OTLP/HTTP port (replace
 kubectl port-forward svc/my-otel-demo-otelcol 4318:4318
 ```
 
-> **Note**
-> `kubectl port-forward` will proxy the port until the process terminates. You
+> **Note** > `kubectl port-forward` will proxy the port until the process terminates. You
 > may need to create separate terminal sessions for each use of
 > `kubectl port-forward`, and use CTRL-C to terminate the process when done.
 
@@ -66,6 +67,7 @@ With the frontendproxy and Collector port-forward set up, you can access:
 - Feature Flags UI: <http://localhost:8080/feature/>
 - Load Generator UI: <http://localhost:8080/loadgen/>
 - Jaeger UI: <http://localhost:8080/jaeger/ui/>
+- AlibabaCloud LogService UI: <https://sls.console.aliyun.com/lognext/trace>
 
 ### Expose services using service type configurations
 
@@ -126,42 +128,3 @@ following sub-paths:
 - Feature Flags UI: `/feature`
 - Load Generator UI: `/loadgen/` (must include trailing slash)
 - Jaeger UI: `/jaeger/ui`
-
-## Bring your own backend
-
-Likely you want to use the Webstore as a demo application for an observability
-backend you already have (e.g. an existing instance of Jaeger, Zipkin, or one
-of the [vendor of your choice](https://opentelemetry.io/vendors/).
-
-The OpenTelemetry Collector's configuration is exposed in the Helm chart. Any
-additions you do will be merged into the default configuration. You can use
-this to add your own exporters, and add them to the desired pipeline(s)
-
-```yaml
-opentelemetry-collector:
-  config:
-    exporters:
-      otlphttp/example:
-        endpoint: <your-endpoint-url>
-
-    service:
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors: [batch]
-          exporters: [otlphttp/example]
-```
-
-> **Note**
-> When merging YAML values with Helm, objects are merged and arrays are replaced.
-
-Vendor backends might require you to add additional parameters for
-authentication, please check their documentation. Some backends require
-different exporters, you may find them and their documentation available at
-[opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).
-
-To install the Helm chart with a custom `my-values-file.yaml` values file use:
-
-```shell
-helm install my-otel-demo open-telemetry/opentelemetry-demo --values my-values-file.yaml
-```

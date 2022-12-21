@@ -1,2 +1,62 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+exporters:
+  alibabacloud_logservice/traces:
+    # ${endpoint} is the endpoint of Log Service. The format is ${region-endpoint}.
+    # ${region-endpoint} is the endpoint of the project.
+    endpoint: "${endpoint}"
+    # ${project} is the name of the Log Service project.
+    project: "${project}"
+    # ${instance-id} is the ID of the trace instance.
+    # For more information, see [Create a trace instance](https://www.alibabacloud.com/help/en/log-service/latest/create-a-trace-instance).
+    logstore: "${instance-id}-traces"
+    # ${access-key-id} is the AccessKey ID of your Alibaba Cloud account.
+    # We recommend that you use the AccessKey pair of a RAM user who has only the write permissions on the Log Service project.
+    # For information about how to grant the write permissions on a specific project to a RAM user,
+    # see [Use custom policies to grant permissions to a RAM user](https://www.alibabacloud.com/help/en/log-service/latest/use-custom-policies-to-grant-permissions-to-a-ram-user).
+    # For information about how to obtain an AccessKey pair, see [AccessKey pair](https://www.alibabacloud.com/help/en/log-service/latest/accesskey-pair).
+    access_key_id: "${access-key-id}"
+    # ${access-key-secret}  is the AccessKey secret of your Alibaba Cloud account.
+    # We recommend that you use the AccessKey pair of a RAM user who has only the write permissions on the Log Service project.
+    access_key_secret: "${access-key-secret}"
+  alibabacloud_logservice/logs:
+    # Consistent with the endpoint of `alibabacloud_logservice/traces`.
+    endpoint: "${endpoint}"
+    # Consistent with the project of `alibabacloud_logservice/traces`
+    project: "${project}"
+    # ${instance-id} consistent with the instance id of `alibabacloud_logservice/traces`.
+    logstore: "${instance-id}-logs"
+    # ${access-key-id} is the AccessKey ID of your Alibaba Cloud account.
+    # We recommend that you use the AccessKey pair of a RAM user who has only the write permissions on the Log Service project.
+    access_key_id: "${access-key-id}"
+    # ${access-key-secret}  is the AccessKey secret of your Alibaba Cloud account.
+    # We recommend that you use the AccessKey pair of a RAM user who has only the write permissions on the Log Service project.
+    access_key_secret: "${access-key-secret}"
+  alibabacloud_logservice/metrics:
+    # Consistent with the endpoint of `alibabacloud_logservice/traces`.
+    endpoint: "${endpoint}"
+    # Consistent with the project of `alibabacloud_logservice/traces`
+    project: "${project}"
+    # ${instance-id} consistent with the instance id of `alibabacloud_logservice/traces`.
+    logstore: "${instance-id}-metrics"
+    # ${access-key-id} is the AccessKey ID of your Alibaba Cloud account.
+    # We recommend that you use the AccessKey pair of a RAM user who has only the write permissions on the Log Service project.
+    access_key_id: "${access-key-id}"
+    # ${access-key-secret}  is the AccessKey secret of your Alibaba Cloud account.
+    # We recommend that you use the AccessKey pair of a RAM user who has only the write permissions on the Log Service project.
+    access_key_secret: "${access-key-secret}"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [alibabacloud_logservice/traces]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [alibabacloud_logservice/logs]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [alibabacloud_logservice/metrics]
