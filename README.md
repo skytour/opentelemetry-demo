@@ -1,4 +1,4 @@
-# ![otel-photo](./docs/img/opentelemetry-logo-nav.png) OpenTelemetry Demo
+# ![otel-photo](./docs/img/opentelemetry-logo-nav.png) OpenTelemetry Demo base on AlibabaCloud LogService
 
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
 [![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
@@ -64,6 +64,7 @@ keeping it up to date for you.
 - [Sumo Logic](https://github.com/SumoLogic/opentelemetry-demo)
 - [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend)
 - [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)
+- [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)
 
 ## Contributing
 
