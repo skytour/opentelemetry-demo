@@ -273,9 +273,11 @@ data:
             insecure: true
         logs_index: otel
       otlp:
-        endpoint: 'opentelemetry-demo-jaeger-collector:4317'
+        endpoint: 'replace_with_your_alibabacloud_opentelemetry_endpoint'
         tls:
           insecure: true
+        headers:
+          "Authentication": ""
       otlphttp/prometheus:
         endpoint: http://opentelemetry-demo-prometheus-server:9090/api/v1/otlp
         tls:
@@ -10074,7 +10076,11 @@ spec:
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://localhost:8080/otlp-http/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.11.0
+          - name: ALIBABA_CLOUD_RUM_PID
+            value: replace_your_alibabacloud_rum_pid
+          - name: ALIBABA_CLOUD_RUM_ENDPOINT
+            value: replace_your_alibabacloud_rum_endpoint
           resources:
             limits:
               memory: 250Mi

@@ -13,6 +13,7 @@ import FrontendTracer from '../utils/telemetry/FrontendTracer';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
+import Script from "next/script";
 
 declare global {
   interface Window {
@@ -21,9 +22,20 @@ declare global {
       NEXT_PUBLIC_OTEL_SERVICE_NAME?: string;
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
       IS_SYNTHETIC_REQUEST?: string;
+      ALIBABA_CLOUD_RUM_PID?: string;
+      ALIBABA_CLOUD_RUM_ENDPOINT?: string;
     };
   }
 }
+
+let alibabaCloudRumConfig = `
+window.__rum = {
+  "pid": "",
+  "endpoint": "",
+  "tracing": true
+};
+`
+
 
 if (typeof window !== 'undefined') {
   const collector = getCookie('otelCollectorUrl')?.toString() || '';
@@ -56,23 +68,41 @@ if (typeof window !== 'undefined') {
       );
     });
   }
+
+  alibabaCloudRumConfig = `
+    window.__rum = {
+      "pid": "${window.ENV.ALIBABA_CLOUD_RUM_PID}",
+      "endpoint": "${window.ENV.ALIBABA_CLOUD_RUM_ENDPOINT}",
+      "tracing": true
+    };
+    `
 }
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const children = <ThemeProvider theme={Theme}>
+    <OpenFeatureProvider>
+      <QueryClientProvider client={queryClient}>
+        <CurrencyProvider>
+          <CartProvider>
+            <Component {...pageProps} />
+          </CartProvider>
+        </CurrencyProvider>
+      </QueryClientProvider>
+    </OpenFeatureProvider>
+  </ThemeProvider>
+
   return (
-    <ThemeProvider theme={Theme}>
-      <OpenFeatureProvider>
-        <QueryClientProvider client={queryClient}>
-          <CurrencyProvider>
-            <CartProvider>
-              <Component {...pageProps} />
-            </CartProvider>
-          </CurrencyProvider>
-        </QueryClientProvider>
-      </OpenFeatureProvider>
-    </ThemeProvider>
+      <html lang="en">
+      <Script id="arms-rum" type="text/javascript">
+        {alibabaCloudRumConfig}
+      </Script>
+      <body>
+      <Script type="text/javascript" src="https://sdk.rum.aliyuncs.com/v2/browser-sdk.js" crossOrigin='anonymous'/>
+      {children}
+      </body>
+      </html>
   );
 }
 
